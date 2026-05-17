@@ -31,7 +31,7 @@ abstract class ServerShoutApi protected constructor() {
 
     open fun onEnable() {
         logger.info("&7")
-        logger.info("&7 &eServerShout &fv${version} &7by &lTheRamU")
+        logger.info("&7 &eServerShout &7For &b&lYanYuTing &r&fv${version} &7by &lTheRamU, AerMini")
         logger.info("&7")
         load()
         updateChecker.startTimer()

@@ -18,7 +18,7 @@ class InfoCommandHandler : CommandHandler {
 
     override fun handle(sender: PlatformCommandSender, alias: String, args: Array<String>) {
         sender.sendMessage("")
-        sender.sendMessage(" §e§lServerShout §f§lv${api.version} §r§7by TheRamU")
+        sender.sendMessage(" §e§lServerShout &r&7for &b&lYanYuTing §f§lv${api.version} §r§7by TheRamU, &fAerMini")
         sender.sendMessage("")
     }
 }

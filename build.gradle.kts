@@ -22,6 +22,7 @@ subprojects {
         maven("https://oss.sonatype.org/content/groups/public/")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://repo.papermc.io/repository/maven-public/")
+        maven("https://repo1.maven.org/maven2/")
     }
 
     dependencies {

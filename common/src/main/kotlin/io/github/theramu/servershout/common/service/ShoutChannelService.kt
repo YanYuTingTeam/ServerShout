@@ -364,6 +364,7 @@ class ShoutChannelService {
             .replace("{server_players}", server.players.size.toString())
             .replace("{channel}", channelName)
             .replaceLuckPermsPlaceholders(sender)
+            .replaceAerLevelsPlaceholders(sender)
             .replace("{player}", sender.name)
             .replace("{message}", content)
 
@@ -419,5 +420,20 @@ class ShoutChannelService {
         }
         matcher.appendTail(replaced)
         return replaced.toString()
+    }
+
+    // AerLevelsBungee支持
+    private fun String.replaceAerLevelsPlaceholders(player: PlatformProxyPlayer): String {
+        if (!pluginManager.isPluginEnabled("AerLevelsBungee")) {
+            return this
+        }
+        try {
+            val api = Class.forName("com.aermini.aerlevels_bungee.api.AerLevelsAPI")
+            val getPlayerLevelMethod = api.getMethod("getPlayerLevel", String::class.java)
+            val level = getPlayerLevelMethod.invoke(null, player.name) as Int
+            return this.replace("{axp_level}", level.toString())
+        } catch (e: Exception) {
+            return this
+        }
     }
 }
