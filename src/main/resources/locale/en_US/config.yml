@@ -7,12 +7,6 @@
 # Configuration version, do not modify
 config-version: 2
 
-# Update check settings
-update-check:
-  enabled: true
-  # Notify online admin players if a new version is available
-  notify: true
-
 # MySQL database configuration
 database:
   # Whether to enable the database

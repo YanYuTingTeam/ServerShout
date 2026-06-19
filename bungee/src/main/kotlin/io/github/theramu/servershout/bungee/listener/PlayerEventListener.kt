@@ -19,7 +19,6 @@ import net.md_5.bungee.event.EventPriority
 class PlayerEventListener : Listener {
 
     private val api get() = ServerShoutApi.api as ServerShoutProxyApi
-    private val updateChecker get() = api.updateChecker
     private val shoutChannelService get() = api.shoutChannelService
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -33,12 +32,6 @@ class PlayerEventListener : Listener {
     @EventHandler
     fun onPostLogin(event: PostLoginEvent) {
         api.removeCache(event.player.uniqueId)
-        updateChecker.notifyUpdate(BungeePlatformPlayer(event.player))
-    }
-
-    @EventHandler
-    fun onServerSwitch(event: ServerSwitchEvent) {
-        updateChecker.notifyUpdate(BungeePlatformPlayer(event.player))
     }
 
     @EventHandler

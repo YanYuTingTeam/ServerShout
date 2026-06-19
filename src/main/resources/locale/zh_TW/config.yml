@@ -7,12 +7,6 @@
 # 配置版本，請勿修改
 config-version: 2
 
-# 更新檢查相關設定
-update-check:
-  enabled: true
-  # 如果有新版本可用，是否通知線上的管理員
-  notify: true
-
 # MySQL 資料庫配置
 database:
   # 是否啟用資料庫

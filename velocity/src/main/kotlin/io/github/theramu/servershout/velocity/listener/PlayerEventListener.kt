@@ -18,8 +18,6 @@ import io.github.theramu.servershout.velocity.platform.player.VelocityPlatformPl
 class PlayerEventListener {
 
     private val api get() = ServerShoutApi.api as ServerShoutVelocityApi
-    private val scheduler get() = api.platform.scheduler
-    private val updateChecker get() = api.updateChecker
     private val shoutChannelService get() = api.shoutChannelService
 
     @Subscribe(order = PostOrder.LAST)
@@ -41,15 +39,7 @@ class PlayerEventListener {
 
     @Subscribe
     fun onServerSwitch(event: ServerConnectedEvent) {
-        val player = event.player
-        api.removeCache(player.uniqueId)
-
-        // 首次连接服务器
-        if (!event.previousServer.isPresent) return
-        scheduler.run({
-            if (!player.isActive || !player.currentServer.isPresent) return@run
-            updateChecker.notifyUpdate(VelocityPlatformPlayer(player))
-        }, 100)
+        api.removeCache(event.player.uniqueId)
     }
 
     @Subscribe(order = PostOrder.LAST)

@@ -4,7 +4,6 @@ import io.github.theramu.servershout.common.service.BalanceService
 import io.github.theramu.servershout.common.command.CommandManager
 import io.github.theramu.servershout.common.config.ConfigLoader
 import io.github.theramu.servershout.common.database.MySqlAccessor
-import io.github.theramu.servershout.common.network.UpdateChecker
 import io.github.theramu.servershout.common.platform.Platform
 import io.github.theramu.servershout.common.platform.ProxyPlatform
 import io.github.theramu.servershout.common.platform.logging.PlatformLogger
@@ -27,19 +26,16 @@ abstract class ServerShoutApi protected constructor() {
     val tokenService = TokenService()
     val balanceService = BalanceService()
     val commandManager = CommandManager()
-    val updateChecker = UpdateChecker()
 
     open fun onEnable() {
         logger.info("&7")
         logger.info("&7 &eServerShout &7For &b&lYanYuTing &r&fv${version} &7by &lTheRamU, AerMini")
         logger.info("&7")
         load()
-        updateChecker.startTimer()
     }
 
     open fun onDisable() {
         mySqlAccessor.close()
-        updateChecker.stopTimer()
     }
 
     open fun load() {
@@ -61,7 +57,6 @@ abstract class ServerShoutApi protected constructor() {
 
     open fun removeCache(uuid: UUID) {
         balanceService.removeCache(uuid)
-        updateChecker.removeNotified(uuid)
     }
 
     abstract fun sendUpdate(playerName: String)

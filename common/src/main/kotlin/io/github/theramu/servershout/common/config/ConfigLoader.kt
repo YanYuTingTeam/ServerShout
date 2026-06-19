@@ -3,7 +3,6 @@ package io.github.theramu.servershout.common.config
 import io.github.theramu.servershout.common.ServerShoutApi
 import io.github.theramu.servershout.common.config.settings.DatabaseSettings
 import io.github.theramu.servershout.common.config.settings.ShoutGlobalSettings
-import io.github.theramu.servershout.common.config.settings.UpdateCheckSettings
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,7 +31,6 @@ class ConfigLoader {
     lateinit var shoutConfig: YamlConfig private set
     lateinit var languageConfig: YamlConfig private set
     lateinit var databaseSettings: DatabaseSettings private set
-    lateinit var updateCheckSettings: UpdateCheckSettings private set
     lateinit var shoutGlobalSettings: ShoutGlobalSettings private set
     lateinit var messagePrefix: String private set
 
@@ -42,7 +40,6 @@ class ConfigLoader {
         logger.info("Loading plugin configuration...")
         pluginConfig = getVerifiedConfig("config.yml")
         databaseSettings = pluginConfig.get("database", DatabaseSettings::class.java)
-        updateCheckSettings = pluginConfig.get("update-check", UpdateCheckSettings::class.java)
         if (isProxy) {
             logger.info("Loading shout configuration...")
             shoutConfig = getVerifiedConfig("shout.yml")

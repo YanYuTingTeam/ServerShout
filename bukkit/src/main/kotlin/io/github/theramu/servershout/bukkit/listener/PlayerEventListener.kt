@@ -14,12 +14,10 @@ import org.bukkit.event.player.PlayerQuitEvent
 class PlayerEventListener : Listener {
 
     private val api get() = ServerShoutApi.api
-    private val updateChecker get() = api.updateChecker
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
         api.removeCache(event.player.uniqueId)
-        updateChecker.notifyUpdate(BukkitPlatformPlayer(event.player))
     }
 
     @EventHandler
