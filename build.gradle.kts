@@ -17,6 +17,10 @@ subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "com.gradleup.shadow")
 
+    kotlin {
+        jvmToolchain(17)
+    }
+
     repositories {
         mavenCentral()
         maven("https://oss.sonatype.org/content/groups/public/")

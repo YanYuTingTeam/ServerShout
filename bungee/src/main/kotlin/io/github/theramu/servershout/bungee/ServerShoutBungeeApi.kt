@@ -22,11 +22,13 @@ class ServerShoutBungeeApi(
     override val platform = BungeePlatform()
     override val logger = BungeePlatformLogger()
     override val dataFolder = plugin.dataFolder
+    val serverInviteHandler = ServerInviteHandler()
     private var metrics: Metrics? = null
 
     override fun onEnable() {
         super.onEnable()
         ProxyServer.getInstance().registerChannel("servershout:main")
+        ProxyServer.getInstance().registerChannel("BungeeCord")
         ProxyServer.getInstance().pluginManager.registerListener(plugin, PlayerEventListener())
         ProxyServer.getInstance().pluginManager.registerListener(plugin, PluginChannelMessageListener())
         registerCommands()
@@ -55,5 +57,9 @@ class ServerShoutBungeeApi(
                 player.server.sendData("servershout:main", bytes.toByteArray())
             }
         }
+    }
+
+    override fun sendServerInvite(playerName: String, inviterName: String, serverName: String) {
+        serverInviteHandler.sendServerInvite(playerName, inviterName, serverName)
     }
 }

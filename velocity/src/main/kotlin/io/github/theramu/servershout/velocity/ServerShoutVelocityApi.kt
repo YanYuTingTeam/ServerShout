@@ -27,11 +27,13 @@ open class ServerShoutVelocityApi protected constructor(
     override val logger = VelocityPlatformLogger()
     override val dataFolder = dataDirectory.toFile()
     val identifier = MinecraftChannelIdentifier.from("servershout:main")
+    val serverInviteHandler = ServerInviteHandler(proxy)
     private var metrics: Metrics? = null
 
     override fun onEnable() {
         super.onEnable()
         proxy.channelRegistrar.register(identifier)
+        proxy.channelRegistrar.register(ServerInviteHandler.BUNGEECORD_CHANNEL)
         proxy.eventManager.register(plugin, PlayerEventListener())
         proxy.eventManager.register(plugin, PluginChannelMessageListener())
         registerCommands()
@@ -73,5 +75,9 @@ open class ServerShoutVelocityApi protected constructor(
                 player.currentServer.get().sendPluginMessage(identifier, bytes.toByteArray())
             }
         }
+    }
+
+    override fun sendServerInvite(playerName: String, inviterName: String, serverName: String) {
+        serverInviteHandler.sendServerInvite(playerName, inviterName, serverName)
     }
 }

@@ -220,9 +220,11 @@ class ShoutChannelService {
             return true
         }
         if (joinType == "servershoutjoin") {
+            // 发送 serverinvite 插件消息到目标服务器
+            api.sendServerInvite(player.name, channelMessage.sender.name, channelMessage.server.name)
             // 相同服务器，不处理
             if (channelMessage.server.name == player.currentServer.name) {
-                player.sendLanguageMessage("message.join.same-server")
+//                player.sendLanguageMessage("message.join.same-server")
                 return true
             }
             val channel = channelMessage.channel

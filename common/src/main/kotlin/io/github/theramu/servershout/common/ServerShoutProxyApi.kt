@@ -31,4 +31,6 @@ abstract class ServerShoutProxyApi protected constructor() : ServerShoutApi() {
             shoutChannelService.addChannel(shoutChannel)
         }
     }
+
+    abstract override fun sendServerInvite(playerName: String, inviterName: String, serverName: String)
 }

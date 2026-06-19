@@ -61,6 +61,8 @@ abstract class ServerShoutApi protected constructor() {
 
     abstract fun sendUpdate(playerName: String)
 
+    open fun sendServerInvite(playerName: String, inviterName: String, serverName: String) {}
+
     companion object {
         private lateinit var instance: ServerShoutApi
 
