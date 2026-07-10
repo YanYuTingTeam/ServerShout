@@ -32,5 +32,5 @@ abstract class ServerShoutProxyApi protected constructor() : ServerShoutApi() {
         }
     }
 
-    abstract override fun sendServerInvite(playerName: String, inviterName: String, serverName: String)
+    abstract override fun sendServerInvite(playerUUID: UUID, inviterUUID: UUID, serverName: String)
 }

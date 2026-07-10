@@ -6,6 +6,7 @@ import io.github.theramu.servershout.bungee.listener.PluginChannelMessageListene
 import io.github.theramu.servershout.bungee.platform.BungeePlatform
 import io.github.theramu.servershout.bungee.platform.logging.BungeePlatformLogger
 import io.github.theramu.servershout.common.ServerShoutProxyApi
+import java.util.UUID
 import net.md_5.bungee.api.ProxyServer
 import org.bstats.bungeecord.Metrics
 import java.io.ByteArrayOutputStream
@@ -59,7 +60,7 @@ class ServerShoutBungeeApi(
         }
     }
 
-    override fun sendServerInvite(playerName: String, inviterName: String, serverName: String) {
-        serverInviteHandler.sendServerInvite(playerName, inviterName, serverName)
+    override fun sendServerInvite(playerUUID: UUID, inviterUUID: UUID, serverName: String) {
+        serverInviteHandler.sendServerInvite(playerUUID, inviterUUID, serverName)
     }
 }

@@ -3,6 +3,7 @@ package io.github.theramu.servershout.velocity
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import io.github.theramu.servershout.common.ServerShoutProxyApi
+import java.util.UUID
 import io.github.theramu.servershout.velocity.command.VelocityCommandAdapter
 import io.github.theramu.servershout.velocity.listener.PlayerEventListener
 import io.github.theramu.servershout.velocity.listener.PluginChannelMessageListener
@@ -77,7 +78,7 @@ open class ServerShoutVelocityApi protected constructor(
         }
     }
 
-    override fun sendServerInvite(playerName: String, inviterName: String, serverName: String) {
-        serverInviteHandler.sendServerInvite(playerName, inviterName, serverName)
+    override fun sendServerInvite(playerUUID: UUID, inviterUUID: UUID, serverName: String) {
+        serverInviteHandler.sendServerInvite(playerUUID, inviterUUID, serverName)
     }
 }
