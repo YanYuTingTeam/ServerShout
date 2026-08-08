@@ -431,8 +431,8 @@ class ShoutChannelService {
         }
         try {
             val api = Class.forName("com.aermini.aerlevels_bungee.api.AerLevelsAPI")
-            val getPlayerLevelMethod = api.getMethod("getPlayerLevel", String::class.java)
-            val level = getPlayerLevelMethod.invoke(null, player.name) as Int
+            val getPlayerLevelMethod = api.getMethod("getPlayerLevel", UUID::class.java)
+            val level = getPlayerLevelMethod.invoke(null, player.uuid) as Int
             return this.replace("{axp_level}", level.toString())
         } catch (e: Exception) {
             return this
