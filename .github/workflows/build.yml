@@ -1,0 +1,27 @@
+name: Build Plugin
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+    release:
+        types: [created]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up JDK
+              uses: actions/setup-java@v4
+              with:
+                  java-version: "17"
+                  distribution: "adopt"
+
+            - name: Build with Gradle
+              run: |
+                  chmod +x gradlew
+                  ./gradlew jar
