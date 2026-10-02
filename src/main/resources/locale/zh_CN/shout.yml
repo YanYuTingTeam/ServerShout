@@ -16,7 +16,8 @@ global:
   server-map:
     'lobby': '大厅'
     'survival': '生存'
-    'bedwars': '起床战争'
+    'bedwars': '起床战争' # 键名对应服务器的名称，值为显示在消息中的名称. 经YanYuTingTeam修改后，允许使用 + 前缀来匹配所有前缀为该名称的服务器
+    '+example': 'I Love U' # 满足条件的服务器示例: example1、example_03、examplegg、example-a
 
   # 代币名称映射，仅用于消息格式
   token-map:

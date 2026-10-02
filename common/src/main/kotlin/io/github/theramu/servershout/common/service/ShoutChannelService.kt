@@ -361,7 +361,7 @@ class ShoutChannelService {
         val format = if (isEmpty) channel.formatEmpty else channel.formatFull
         val formattedMessage = format.joinToString("\n&r")
 
-        val replacedServerName = shoutGlobalSettings.serverMap[serverName] ?: serverName
+        val replacedServerName = shoutGlobalSettings.getServerDisplayName(serverName)
         val replaceFun = fun(str: String) = str.replace("{server}", replacedServerName)
             .replace("{server_players}", server.players.size.toString())
             .replace("{channel}", channelName)

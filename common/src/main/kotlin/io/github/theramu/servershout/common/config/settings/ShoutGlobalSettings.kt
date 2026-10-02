@@ -14,6 +14,14 @@ data class ShoutGlobalSettings(
     val serverList: ServerListSettings
 ) : Serializable {
 
+    fun getServerDisplayName(serverName: String): String {
+        serverMap[serverName]?.let { return it }
+        val hitKey = serverMap.keys
+            .filter { it.startsWith("+") && serverName.startsWith(it.substring(1)) }
+            .maxByOrNull { it.length }
+        return hitKey?.let { serverMap[it] } ?: serverName
+    }
+
     companion object {
         @JvmStatic
         fun deserialize(map: Map<String, Any>): ShoutGlobalSettings {
