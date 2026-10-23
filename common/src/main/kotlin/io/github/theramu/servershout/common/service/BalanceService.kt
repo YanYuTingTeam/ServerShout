@@ -50,37 +50,44 @@ class BalanceService {
         return getBalance(uuid, token, force)?.amount ?: 0
     }
 
+    fun getCachedBalance(uuid: UUID, token: Token): String? {
+        cacheLock.read {
+            return cache[uuid]?.get(token.name)?.let { if (it.id != -1) it.amount.toString() else "0" }
+        }
+    }
+
     fun setBalanceAmount(playerName: String, token: Token, amount: Long) {
         require(amount >= 0) { "Balance cannot be negative" }
         checkDatabase()
         val uuid = UuidUtil.toUuid(playerName)
-        cacheLock.write {
-            mySqlAccessor.updateBalance(uuid, token, amount)
-            this.removeCache(uuid, token)
-        }
+        mySqlAccessor.updateBalance(uuid, token, amount)
+        this.removeCache(uuid, token)
     }
 
     fun giveBalance(playerName: String, token: Token, amount: Long) {
         require(amount >= 0) { "Balance cannot be negative" }
         checkDatabase()
         val uuid = UuidUtil.toUuid(playerName)
-        cacheLock.write {
-            mySqlAccessor.giveBalance(uuid, token, amount)
-            this.removeCache(uuid, token)
-        }
+        mySqlAccessor.giveBalance(uuid, token, amount)
+        this.removeCache(uuid, token)
     }
 
     fun takeBalance(playerName: String, token: Token, amount: Long) {
         require(amount >= 0) { "Balance cannot be negative" }
         checkDatabase()
         val uuid = UuidUtil.toUuid(playerName)
-        cacheLock.write {
-            val balance = getBalance(uuid, token, force = true)
-            if (balance == null || balance.amount < amount || !mySqlAccessor.takeBalance(uuid, token, amount)) {
-                throw ServiceException(40002, language = "message.commands.balance-take.not-enough", args = arrayOf(playerName, token.name))
+        cacheLock.read {
+            cache[uuid]?.get(token.name)?.let {
+                if (it.id != -1 && it.amount < amount) {
+                    throw ServiceException(40002, language = "message.commands.balance-take.not-enough", args = arrayOf(playerName, token.name))
+                }
             }
-            this.removeCache(uuid, token)
         }
+        val balance = getBalance(uuid, token, force = true)
+        if (balance == null || balance.amount < amount || !mySqlAccessor.takeBalance(uuid, token, amount)) {
+            throw ServiceException(40002, language = "message.commands.balance-take.not-enough", args = arrayOf(playerName, token.name))
+        }
+        this.removeCache(uuid, token)
     }
 
     fun hasBalance(playerName: String, token: Token, amount: Long, force: Boolean = false): Boolean {

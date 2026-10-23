@@ -1,7 +1,9 @@
 package io.github.theramu.servershout.bukkit.hook
 
+import io.github.theramu.servershout.bukkit.ServerShoutBukkitPlugin
 import io.github.theramu.servershout.common.ServerShoutApi
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 /**
@@ -24,6 +26,11 @@ class ServerShoutPlaceholderExpansion : PlaceholderExpansion() {
         if (!arg.startsWith("balance_")) return "INVALID_PLACEHOLDER"
         val tokenName = arg.substring(8)
         val token = tokenService.getToken(tokenName) ?: return "INVALID_TOKEN"
-        return balanceService.getBalance(player.uniqueId, token)?.amount?.toString() ?: "0"
+        return balanceService.getCachedBalance(player.uniqueId, token) ?: run {
+            Bukkit.getScheduler().runTaskAsynchronously(ServerShoutBukkitPlugin.getInstance()) {
+                balanceService.getBalance(player.uniqueId, token)
+            }
+            "0"
+        }
     }
 }
