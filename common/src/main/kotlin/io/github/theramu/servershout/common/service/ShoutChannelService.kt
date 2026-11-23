@@ -379,11 +379,23 @@ class ShoutChannelService {
                     continue
                 }
                 player.sendMessage(component)
+                if (!api.useShoutBroadcast) {
+                    api.sendShout(player, channelName, component)
+                }
             }
         }
 
+        if (api.useShoutBroadcast) {
+            api.sendShout(receiverServers, channelName, component)
+        }
+
         if (sender.isOnline()) {
-            if (!channel.localBroadcast) sender.sendMessage(component)
+            if (!channel.localBroadcast) {
+                sender.sendMessage(component)
+                if (!api.useShoutBroadcast) {
+                    api.sendShout(sender, channelName, component)
+                }
+            }
             if (tokenCostName != null) {
                 sender.sendLanguageMessage("message.shout.success", tokenCostName, balanceAmount)
             } else {

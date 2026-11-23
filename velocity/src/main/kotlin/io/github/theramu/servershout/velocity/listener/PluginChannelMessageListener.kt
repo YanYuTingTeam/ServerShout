@@ -19,6 +19,10 @@ class PluginChannelMessageListener {
 
     @Subscribe
     fun onPluginMessageFromPlayer(event: PluginMessageEvent) {
+        if (event.identifier == api.shoutIdentifier) {
+            event.result = PluginMessageEvent.ForwardResult.handled()
+            return
+        }
         if (event.identifier !== api.identifier) return
         DataInputStream(ByteArrayInputStream(event.data)).use { input ->
             val type = input.readUTF()

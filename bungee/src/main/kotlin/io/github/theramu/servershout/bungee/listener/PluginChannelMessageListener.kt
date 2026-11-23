@@ -1,6 +1,7 @@
 package io.github.theramu.servershout.bungee.listener
 
 import io.github.theramu.servershout.common.ServerShoutApi
+import io.github.theramu.servershout.common.ServerShoutProxyApi
 import net.md_5.bungee.api.event.PluginMessageEvent
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
@@ -19,6 +20,10 @@ class PluginChannelMessageListener : Listener {
 
     @EventHandler
     fun onPluginMessage(event: PluginMessageEvent) {
+        if (event.tag == ServerShoutProxyApi.SHOUT_MESSAGE_CHANNEL) {
+            event.isCancelled = true
+            return
+        }
         if (event.tag != "servershout:main") return
         DataInputStream(ByteArrayInputStream(event.data)).use { input ->
             val type = input.readUTF()

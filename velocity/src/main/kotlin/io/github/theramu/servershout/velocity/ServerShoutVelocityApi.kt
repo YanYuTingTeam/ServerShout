@@ -3,6 +3,7 @@ package io.github.theramu.servershout.velocity
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import io.github.theramu.servershout.common.ServerShoutProxyApi
+import io.github.theramu.servershout.common.platform.player.PlatformPlayer
 import java.util.UUID
 import io.github.theramu.servershout.velocity.command.VelocityCommandAdapter
 import io.github.theramu.servershout.velocity.listener.PlayerEventListener
@@ -28,12 +29,14 @@ open class ServerShoutVelocityApi protected constructor(
     override val logger = VelocityPlatformLogger()
     override val dataFolder = dataDirectory.toFile()
     val identifier = MinecraftChannelIdentifier.from("servershout:main")
+    val shoutIdentifier = MinecraftChannelIdentifier.from(SHOUT_MESSAGE_CHANNEL)
     val serverInviteHandler = ServerInviteHandler(proxy)
     private var metrics: Metrics? = null
 
     override fun onEnable() {
         super.onEnable()
         proxy.channelRegistrar.register(identifier)
+        proxy.channelRegistrar.register(shoutIdentifier)
         proxy.channelRegistrar.register(ServerInviteHandler.BUNGEECORD_CHANNEL)
         proxy.eventManager.register(plugin, PlayerEventListener())
         proxy.eventManager.register(plugin, PluginChannelMessageListener())
@@ -45,6 +48,7 @@ open class ServerShoutVelocityApi protected constructor(
     override fun onDisable() {
         super.onDisable()
         proxy.eventManager.unregisterListeners(plugin)
+        proxy.channelRegistrar.unregister(shoutIdentifier)
         metrics?.shutdown()
     }
 
@@ -80,5 +84,11 @@ open class ServerShoutVelocityApi protected constructor(
 
     override fun sendServerInvite(playerUUID: UUID, inviterUUID: UUID, serverName: String) {
         serverInviteHandler.sendServerInvite(playerUUID, inviterUUID, serverName)
+    }
+
+    override fun sendShoutData(player: PlatformPlayer, data: ByteArray) {
+        proxy.getPlayer(player.uuid).flatMap { it.currentServer }.ifPresent {
+            it.sendPluginMessage(shoutIdentifier, data)
+        }
     }
 }
