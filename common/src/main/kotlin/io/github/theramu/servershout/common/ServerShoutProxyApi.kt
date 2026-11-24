@@ -8,6 +8,9 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.nio.file.Files
 import java.util.*
 
 /**
@@ -17,10 +20,32 @@ import java.util.*
 abstract class ServerShoutProxyApi protected constructor() : ServerShoutApi() {
     val shoutChannelService = ShoutChannelService()
     open val useShoutBroadcast = false
+    @Volatile private var displayHmacKey: ByteArray? = null
 
     override fun load() {
+        val key = loadDisplayKey()
         super.load()
+        displayHmacKey = key
         loadShoutChannels()
+    }
+
+    private fun loadDisplayKey(): ByteArray? {
+        val file = File(dataFolder, "shout-display-auth.properties")
+        if (Files.notExists(file.toPath())) {
+            check(displayHmacKey == null) { "shout-display-auth.properties disappeared; authentication remains enabled" }
+            return null
+        }
+        val properties = Properties()
+        FileInputStream(file).use { properties.load(it) }
+        require(properties.size == 1 && properties.containsKey("hmac-key")) {
+            "shout-display-auth.properties must contain only hmac-key"
+        }
+        val value = properties.getProperty("hmac-key")
+        if (value.isEmpty()) {
+            check(displayHmacKey == null) { "Refusing to disable display authentication during reload; restart to disable" }
+            return null
+        }
+        return ShoutDisplayAuth.parseKey(value)
     }
 
     override fun removeCache(uuid: UUID) {
@@ -45,6 +70,12 @@ abstract class ServerShoutProxyApi protected constructor() : ServerShoutApi() {
         try {
             val content = LegacyComponentSerializer.legacySection().serialize(component)
             if (channelName.length > 32766 || content.length > 32766) return
+            val key = displayHmacKey
+            if (key != null) {
+                val data = ShoutDisplayAuth.encode(key, 2, player.uuid, channelName, content, System.currentTimeMillis(), UUID.randomUUID())
+                if (data.size <= 32766) sendShoutData(player, data)
+                return
+            }
             val bytes = ByteArrayOutputStream()
             DataOutputStream(bytes).use { out ->
                 out.writeByte(2)
@@ -62,6 +93,12 @@ abstract class ServerShoutProxyApi protected constructor() : ServerShoutApi() {
         try {
             val content = LegacyComponentSerializer.legacySection().serialize(component)
             if (channelName.length > 32766 || content.length > 32766) return
+            val key = displayHmacKey
+            if (key != null) {
+                val data = ShoutDisplayAuth.encode(key, 1, null, channelName, content, System.currentTimeMillis(), UUID.randomUUID())
+                if (data.size <= 32766) sendShoutData(servers, data)
+                return
+            }
             val bytes = ByteArrayOutputStream()
             DataOutputStream(bytes).use { out ->
                 out.writeByte(3)

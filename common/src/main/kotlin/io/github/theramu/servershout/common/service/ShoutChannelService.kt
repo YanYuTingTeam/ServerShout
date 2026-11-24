@@ -372,29 +372,20 @@ class ShoutChannelService {
 
         val component = parseComponent(ColorUtil.translateColor(formattedMessage), channelMessage.id, replaceFun)
 
-        receiverServers.filter { channel.localBroadcast || it.name != serverName }.forEach {
-            for (player in it.players) {
-                if (mutePlayerMap[player.uuid]?.contains(sender.uuid) == true || muteChannelMap[player.uuid]?.contains(channelName) == true) {
-                    // 屏蔽消息
-                    continue
-                }
-                player.sendMessage(component)
-                if (!api.useShoutBroadcast) {
-                    api.sendShout(player, channelName, component)
-                }
-            }
-        }
-
-        if (api.useShoutBroadcast) {
-            api.sendShout(receiverServers, channelName, component)
+        val recipients = ShoutRecipients.select(
+            receiverServers, serverName, channel.localBroadcast, sender.isOnline(),
+            { it.name }, { it.players },
+            { mutePlayerMap[it.uuid]?.contains(sender.uuid) == true || muteChannelMap[it.uuid]?.contains(channelName) == true }
+        )
+        recipients.players.forEach { player ->
+            player.sendMessage(component)
+            api.sendShout(player, channelName, component)
         }
 
         if (sender.isOnline()) {
-            if (!channel.localBroadcast) {
+            if (recipients.echoSender) {
                 sender.sendMessage(component)
-                if (!api.useShoutBroadcast) {
-                    api.sendShout(sender, channelName, component)
-                }
+                api.sendShout(sender, channelName, component)
             }
             if (tokenCostName != null) {
                 sender.sendLanguageMessage("message.shout.success", tokenCostName, balanceAmount)
